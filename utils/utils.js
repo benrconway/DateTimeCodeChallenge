@@ -1,4 +1,4 @@
-const { Interval } = require("luxon");
+const { DateTime, Interval } = require("luxon");
 
 const prepareIntervalfromISO = (intervalISOString) => {
   // format the interval to be returned
@@ -32,4 +32,32 @@ const prepareUserArray = (userInformation) => {
   });
 };
 
-module.exports = { prepareUserArray };
+const startOfEarliestIntervalInUTCString = (userArray) => {
+  let earliestStart = DateTime.utc();
+  userArray.forEach((user) => {
+    user.intervals.forEach((interval) => {
+      if (interval.start < earliestStart) {
+        earliestStart = interval.start;
+      }
+    });
+  });
+  return earliestStart.toUTC().toString();
+};
+
+const endOfLatestIntervalInUTCString = (userArray) => {
+  let latestEnd = DateTime.fromMillis(0);
+  userArray.forEach((user) => {
+    user.intervals.forEach((interval) => {
+      if (interval.end > latestEnd) {
+        latestEnd = interval.end;
+      }
+    });
+  });
+  return latestEnd.toUTC().toString();
+};
+
+module.exports = {
+  startOfEarliestIntervalInUTCString,
+  endOfLatestIntervalInUTCString,
+  prepareUserArray,
+};
