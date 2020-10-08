@@ -17,4 +17,9 @@ describe("Can correctly answer the following questions:", () => {
       "2020-01-01T00:15:00.000Z"
     );
   });
+  test("What is the ending date and time (in UTC) of the latest interval where any of the workers are free?", () => {
+    expect(endOfLatestIntervalInUTCString(userArray)).toBe(
+      "2020-01-01T04:45:00.000Z"
+    );
+  });
 });
