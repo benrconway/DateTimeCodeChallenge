@@ -1,10 +1,4 @@
-const fs = require("fs");
 const { Interval } = require("luxon");
-
-const readFromFile = (pathToFile) => {
-  if (!pathToFile) return "No path supplied";
-  return fs.readFileSync(pathToFile, "utf8");
-};
 
 const prepareIntervalfromISO = (intervalISOString) => {
   // format the interval to be returned
@@ -38,4 +32,4 @@ const prepareUserArray = (userInformation) => {
   });
 };
 
-module.exports = { readFromFile, prepareUserArray };
+module.exports = { prepareUserArray };
