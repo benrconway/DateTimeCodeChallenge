@@ -1,5 +1,5 @@
 {
-  "name": "DateTimeChallenge",
+  "name": "date-time-code-challenge",
   "version": "1.0.0",
   "description": "My response to a code challenge related to DateTime and processing Intervals",
   "main": "script.js",
