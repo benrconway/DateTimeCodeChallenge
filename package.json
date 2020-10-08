@@ -4,13 +4,15 @@
   "description": "My response to a code challenge related to DateTime and processing Intervals",
   "main": "script.js",
   "scripts": {
+    "dev": "node script.js",
     "test": "jest"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "luxon": "^1.25.0"
+    "luxon": "^1.25.0",
+    "yargs": "^16.0.3"
   },
   "devDependencies": {
     "jest": "^26.5.2"
