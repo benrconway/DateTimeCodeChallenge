@@ -56,8 +56,101 @@ const endOfLatestIntervalInUTCString = (userArray) => {
   return latestEnd.toUTC().toString();
 };
 
+const itemsHaveBeenPreviouslyMatched = (itemIds, arrayOfTestedIds) => {
+  const { a, b } = itemIds;
+  let hasMatch = false;
+  arrayOfTestedIds.forEach((item) => {
+    item.includes(a) && item.includes(b) ? (hasMatch = true) : null;
+  });
+  return hasMatch;
+};
+
+const removeEngulfedBy = (originalArray) => {
+  const duplicateIndices = [];
+  const newArray = [...originalArray];
+  originalArray.forEach((intervalA, indexA) => {
+    originalArray.forEach((intervalB, indexB) => {
+      // Any items that are duplicates, remove from newArray
+      if (
+        indexA === indexB ||
+        itemsHaveBeenPreviouslyMatched(
+          { a: indexA, b: indexB },
+          duplicateIndices
+        )
+      )
+        return;
+
+      if (intervalA.engulfs(intervalB)) {
+        // replace old value with null to maintain array positions
+        newArray.splice(indexB, 1, null);
+        duplicateIndices.push(`${indexA}-${indexB}`);
+      }
+    });
+  });
+  return newArray.filter((item) => item !== null);
+};
+
+const intervalArrayToUTCString = (originalArray) => {
+  return originalArray.map((interval) => {
+    return Interval.fromISO(interval.toISO(), { zone: "utc" }).toISO();
+  });
+};
+
+const formatResults = (originalArray) => {
+  const sortedResults = [...originalArray].sort();
+  return intervalArrayToUTCString(sortedResults);
+};
+
+const tightenResults = (resultsArray) => {
+  // This could be much improved to include Interval.equals and Interval.overlaps.
+  return removeEngulfedBy(resultsArray);
+};
+
+const supplyArrayOfWorkerOverlappingHours = (userArray) => {
+  const userMatchingsComplete = [];
+  const arrayOfReturnIntervals = [];
+
+  userArray.forEach((userA) => {
+    userArray.forEach((userB) => {
+      // skip loop if id matches or pair of ids have been tested
+      if (
+        userA.id === userB.id ||
+        itemsHaveBeenPreviouslyMatched(
+          { a: userA.id, b: userB.id },
+          userMatchingsComplete
+        )
+      )
+        return;
+
+      userA.intervals.forEach((intervalA) => {
+        userB.intervals.forEach((intervalB, index) => {
+          // 1) Check to see if Interval A overlaps with Interval B
+          if (
+            intervalA.overlaps(intervalB) ||
+            intervalA.equals(intervalB) ||
+            intervalA.engulfs(intervalB)
+          ) {
+            const intersection = intervalA.intersection(intervalB);
+            arrayOfReturnIntervals.push(intersection);
+          }
+          if (index === userB.intervals.length - 1) {
+            // if the index is the last index, put the ids of tested users
+            // into the array to stop re-test of these users.
+            userMatchingsComplete.push(`${userA.id}-${userB.id}`);
+          }
+        });
+      });
+    });
+  });
+  // tighten results to remove those engulfed by other results
+  const arrayToReturn = tightenResults(arrayOfReturnIntervals);
+  // return in desired format
+  return formatResults(arrayToReturn);
+};
+
 module.exports = {
   startOfEarliestIntervalInUTCString,
   endOfLatestIntervalInUTCString,
   prepareUserArray,
+  supplyArrayOfWorkerOverlappingHours,
 };
