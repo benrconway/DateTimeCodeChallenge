@@ -4,6 +4,7 @@
   "description": "My response to a code challenge related to DateTime and processing Intervals",
   "main": "script.js",
   "scripts": {
+    "start": "node script.js",
     "dev": "node script.js --file=./input.txt",
     "dev-test": "node script.js --file=./testInput.txt",
     "test": "jest"
