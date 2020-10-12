@@ -6,6 +6,7 @@ const {
   endOfLatestIntervalInUTCString,
   supplyArrayOfWorkerOverlappingHours,
 } = require("./utils");
+const stringConstants = require("./constants");
 
 describe("Can correctly answer the following questions:", () => {
   let userArray;
@@ -13,17 +14,17 @@ describe("Can correctly answer the following questions:", () => {
     const parsedFile = fs.readFileSync("testInput.txt", "utf8");
     userArray = prepareUserArray(parsedFile);
   });
-  test("What is the starting date and time (in UTC) of the earliest interval where any of the workers are free?", () => {
+  test(stringConstants.QUESTION_ONE, () => {
     expect(startOfEarliestIntervalInUTCString(userArray)).toBe(
       "2020-01-01T00:15:00.000Z"
     );
   });
-  test("What is the ending date and time (in UTC) of the latest interval where any of the workers are free?", () => {
+  test(stringConstants.QUESTION_TWO, () => {
     expect(endOfLatestIntervalInUTCString(userArray)).toBe(
       "2020-01-01T04:45:00.000Z"
     );
   });
-  test("What are the intervals of date and times (in UTC) where there are at least 2 workers free?", () => {
+  test(stringConstants.QUESTION_THREE, () => {
     // without specific guidance I have chosen to store the expected output as an array.
     // arrays have been converted to strings for simplicity of test comparison
     expect(supplyArrayOfWorkerOverlappingHours(userArray).toString()).toBe(

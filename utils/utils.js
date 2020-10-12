@@ -68,6 +68,7 @@ const itemsHaveBeenPreviouslyMatched = (itemIds, arrayOfTestedIds) => {
 const removeEngulfedBy = (originalArray) => {
   const duplicateIndices = [];
   const newArray = [...originalArray];
+  const arrayLength = originalArray.length - 1;
   originalArray.forEach((intervalA, indexA) => {
     originalArray.forEach((intervalB, indexB) => {
       // Any items that are duplicates, remove from newArray
@@ -83,6 +84,9 @@ const removeEngulfedBy = (originalArray) => {
       if (intervalA.engulfs(intervalB)) {
         // replace old value with null to maintain array positions
         newArray.splice(indexB, 1, null);
+        duplicateIndices.push(`${indexA}-${indexB}`);
+      }
+      if (indexB === arrayLength) {
         duplicateIndices.push(`${indexA}-${indexB}`);
       }
     });
@@ -121,7 +125,7 @@ const supplyArrayOfWorkerOverlappingHours = (userArray) => {
         )
       )
         return;
-
+      const arrayLength = userB.intervals.length - 1;
       userA.intervals.forEach((intervalA) => {
         userB.intervals.forEach((intervalB, index) => {
           // 1) Check to see if Interval A overlaps with Interval B
@@ -133,7 +137,7 @@ const supplyArrayOfWorkerOverlappingHours = (userArray) => {
             const intersection = intervalA.intersection(intervalB);
             arrayOfReturnIntervals.push(intersection);
           }
-          if (index === userB.intervals.length - 1) {
+          if (index === arrayLength) {
             // if the index is the last index, put the ids of tested users
             // into the array to stop re-test of these users.
             userMatchingsComplete.push(`${userA.id}-${userB.id}`);
